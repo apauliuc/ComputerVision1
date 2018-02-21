@@ -31,8 +31,7 @@ normal = zeros(h, w, 3);
 
 for row = 1:h
     for col = 1:w
-        i = image_stack(row, col, :);
-        i = i(:);
+        i = squeeze(image_stack(row, col, :));
         if shadow_trick == true
             scriptI = diag(i);
             g = linsolve(scriptI * scriptV, scriptI * i);
