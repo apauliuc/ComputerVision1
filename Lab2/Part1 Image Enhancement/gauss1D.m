@@ -3,7 +3,6 @@ function G = gauss1D( sigma , kernel_size )
     if mod(kernel_size, 2) == 0
         error('kernel_size must be odd, otherwise the filter will not have a center to convolve on')
     end
-    %% solution
     % create initial vector of size kernel_size, centered around 0
     floored_size = floor(kernel_size / 2);
     kernel = (-floored_size:floored_size);
