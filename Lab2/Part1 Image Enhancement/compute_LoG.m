@@ -10,22 +10,24 @@ switch LOG_type
     case 2
         %method 2
         LoG_kernel = fspecial('log', 5, 0.5);
-        imOut = imfilter(image, LoG_kernel, 'conv');
+        imOut = imfilter(image, LoG_kernel, 'replicate', 'conv');
         
     case 3
         %method 3
-        ratio = 10;
+        ratio = 1.6;
         sigma1 = 0.5;
         sigma2 = sigma1 * ratio;
+
+        gaussian1 = imgaussfilt(image, sigma1, 'FilterSize', 5);
+        gaussian2 = imgaussfilt(image, sigma2, 'FilterSize', 5);
         
-        filter1 = fspecial('Gaussian', 5, sigma1);
-        filter2 = fspecial('Gaussian', 5, sigma2);
-        
-        gaussian1 = imfilter(image, filter1, 'replicate');
-        gaussian2 = imfilter(image, filter2, 'replicate');
+%         filter1 = fspecial('Gaussian', 5, sigma1);
+%         filter2 = fspecial('Gaussian', 5, sigma2);
+%         
+%         gaussian1 = imfilter(image, filter1, 'replicate');
+%         gaussian2 = imfilter(image, filter2, 'replicate');
         
         imOut = gaussian2 - gaussian1;
 end
-% figure, imshow(imOut, []);
 end
 

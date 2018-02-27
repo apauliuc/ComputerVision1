@@ -23,6 +23,6 @@ switch kernel_type
         if nargin ~= 4
            error('Invalid number of parameters for Gaussian filtering')
         end
-        imOut = imfilter(image, gauss2D(varargin{1}, varargin{2}));
+        imOut = imfilter(image, gauss2D(varargin{1}, varargin{2}), 'replicate');
 end
 end
