@@ -133,8 +133,8 @@ fprintf('--------------------------------------\n')
 %            explain what works better and why shortly in the report.
 featureMaps = cell(length(gaborFilterBank),1);
 for jj = 1 : length(gaborFilterBank)
-    real_out =  % \\TODO: filter the grayscale input with real part of the Gabor
-    imag_out =  % \\TODO: filter the grayscale input with imaginary part of the Gabor
+    real_out =  imfilter(img_gray, gaborFilterBank(jj).filterPairs(:,:,1));
+    imag_out =  imfilter(img_gray, gaborFilterBank(jj).filterPairs(:,:,2));
     featureMaps{jj} = cat(3, real_out, imag_out);
     
     % Visualize the filter responses if you wish.
@@ -156,9 +156,9 @@ end
 % \\ Hint: (real_part^2 + imaginary_part^2)^(1/2) \\
 featureMags =  cell(length(gaborFilterBank),1);
 for jj = 1:length(featureMaps)
-    real_part = featureMaps{jj}(:,:,1);
-    imag_part = featureMaps{jj}(:,:,2);
-    featureMags{jj} = % \\TODO: Compute the magnitude here
+    real_part = double(featureMaps{jj}(:,:,1));
+    imag_part = double(featureMaps{jj}(:,:,2));
+    featureMags{jj} = (real_part.^2 + imag_part.^2).^(1/2);
     
     % Visualize the magnitude response if you wish.
     if visFlag
@@ -188,6 +188,9 @@ if smoothingFlag
         % i)  filter the magnitude response with appropriate Gaussian kernels
         % ii) insert the smoothed image into features(:,:,jj)
     %END_FOR
+    for i = 1:length(featureMags)
+        features(:,:,jj) = imfilter(featureMags{jj},fspecial('gaussian'));
+    end
 else
     % Don't smooth but just insert magnitude images into the matrix
     % called features.
@@ -208,7 +211,7 @@ features = reshape(features, numRows * numCols, []);
 % \\ Hint: see http://ufldl.stanford.edu/wiki/index.php/Data_Preprocessing
 %          for more information. \\
 
-features = % \\ TODO: i)  Implement standardization on matrix called features. 
+features = features/255;% \\ TODO: i)  Implement standardization on matrix called features. 
            %          ii) Return the standardized data matrix.
 
 
@@ -227,7 +230,7 @@ imshow(feature2DImage,[]), title('Pixel representation projected onto first PC')
 % \\ Hint-2: use the parameter k defined in the first section when calling
 %            MATLAB's built-in kmeans function.
 tic
-pixLabels = % \\TODO: Return cluster labels per pixel
+pixLabels = kmeans(features,k);
 ctime = toc;
 fprintf('Clustering completed in %.3f seconds.\n', ctime);
 
