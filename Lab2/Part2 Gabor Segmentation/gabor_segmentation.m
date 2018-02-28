@@ -68,7 +68,7 @@ lambdas = 2.^(0:(n-2)) * lambdaMin;
 
 % Define the set of orientations for the Gaussian envelope.
 dTheta      = 2*pi/8;                  % \\ the step size
-orientations = 0:dTheta:(pi/2);       
+orientations = 0:dTheta:(pi/2);
 
 % Define the set of sigmas for the Gaussian envelope. Sigma here defines 
 % the standard deviation, or the spread of the Gaussian. 
@@ -188,8 +188,9 @@ if smoothingFlag
         % i)  filter the magnitude response with appropriate Gaussian kernels
         % ii) insert the smoothed image into features(:,:,jj)
     %END_FOR
-    for i = 1:length(featureMags)
-        features(:,:,jj) = imfilter(featureMags{jj},fspecial('gaussian'));
+    for jj = 1:length(featureMags)
+        features(:,:,jj) = imgaussfilt(featureMags{jj}, gaborFilterBank(jj).sigma);
+%         features(:,:,jj) = imfilter(featureMags{jj},fspecial('gaussian', 5, gaborFilterBank(jj).sigma));
     end
 else
     % Don't smooth but just insert magnitude images into the matrix
@@ -198,7 +199,6 @@ else
         features(:,:,jj) = featureMags{jj};
     end
 end
-
 
 % Reshape the filter outputs (i.e. tensor called features) of size 
 % [numRows, numCols, numFilters] into a matrix of size [numRows*numCols, numFilters]
@@ -211,9 +211,11 @@ features = reshape(features, numRows * numCols, []);
 % \\ Hint: see http://ufldl.stanford.edu/wiki/index.php/Data_Preprocessing
 %          for more information. \\
 
-features = features/255;% \\ TODO: i)  Implement standardization on matrix called features. 
-           %          ii) Return the standardized data matrix.
-
+% \\ TODO: i)  Implement standardization on matrix called features. 
+%          ii) Return the standardized data matrix.
+features = bsxfun(@minus, features, mean(features));
+features = bsxfun(@rdivide,features,std(features));
+% features = (features - mean(features)) ./ std(features);
 
 % (Optional) Visualize the saliency map using the first principal component 
 % of the features matrix. It will be useful to diagnose possible problems 
