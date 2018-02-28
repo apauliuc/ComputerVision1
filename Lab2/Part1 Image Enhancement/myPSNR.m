@@ -1,9 +1,10 @@
-% myPSNR('images/image1.jpg','images/image1_saltpepper.jpg')
-
-function [ PSNR ] = myPSNR( orig_image_path, approx_image_path )
-orig_image = double(imread(orig_image_path));
-approx_image = double(imread(approx_image_path));
+function [ PSNR ] = myPSNR( orig_image, approx_image )
+% convert images to double for computation
+orig_image = double(orig_image);
+approx_image = double(approx_image);
+% find error
 error = orig_image - approx_image;
+% compute PSRN by formula
 PSNR = 20*log10(max(orig_image(:))/(sqrt(mean(error(:).^2))));
 end
 

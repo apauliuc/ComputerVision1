@@ -39,7 +39,7 @@ switch image_id
 end
 
 % Image adjustments
-img      = imresize(img,resize_factor);
+img      = im2double(imresize(img,resize_factor));
 img_gray = rgb2gray(img);
 
 % Display image
@@ -156,8 +156,8 @@ end
 % \\ Hint: (real_part^2 + imaginary_part^2)^(1/2) \\
 featureMags =  cell(length(gaborFilterBank),1);
 for jj = 1:length(featureMaps)
-    real_part = double(featureMaps{jj}(:,:,1));
-    imag_part = double(featureMaps{jj}(:,:,2));
+    real_part = featureMaps{jj}(:,:,1);
+    imag_part = featureMaps{jj}(:,:,2);
     featureMags{jj} = (real_part.^2 + imag_part.^2).^(1/2);
     
     % Visualize the magnitude response if you wish.
@@ -190,7 +190,6 @@ if smoothingFlag
     %END_FOR
     for jj = 1:length(featureMags)
         features(:,:,jj) = imgaussfilt(featureMags{jj}, gaborFilterBank(jj).sigma);
-%         features(:,:,jj) = imfilter(featureMags{jj},fspecial('gaussian', 5, gaborFilterBank(jj).sigma));
     end
 else
     % Don't smooth but just insert magnitude images into the matrix
@@ -215,7 +214,6 @@ features = reshape(features, numRows * numCols, []);
 %          ii) Return the standardized data matrix.
 features = bsxfun(@minus, features, mean(features));
 features = bsxfun(@rdivide,features,std(features));
-% features = (features - mean(features)) ./ std(features);
 
 % (Optional) Visualize the saliency map using the first principal component 
 % of the features matrix. It will be useful to diagnose possible problems 

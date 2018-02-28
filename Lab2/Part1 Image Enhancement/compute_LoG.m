@@ -3,7 +3,7 @@ function imOut = compute_LoG(image, LOG_type)
 switch LOG_type
     case 1
         %method 1
-        % first smooth the image with Gaussian kernel and
+        % smooth the image with Gaussian kernel and
         % afterwards convolve with Laplacian filter
         smoothed_img = imfilter(image, gauss2D(0.5, 5));
         h = fspecial('laplacian');
@@ -26,12 +26,11 @@ switch LOG_type
         filter_low = gauss2D(sigma_low, 5);
         filter_high = gauss2D(sigma_high, 5);
         
-        % compute Difference of Gaussians (DoG)
-        DoG = filter_high - filter_low;
-        
-        % convolve image with DoG and normalise to grayscale for better
-        % visualising
+        % compute Difference of Gaussians (DoG) and convolve image
+        DoG = filter_high - filter_low; 
         imOut = imfilter(image, DoG, 'replicate');
+        
+        % normalise to grayscale for better visualising
         imOut = mat2gray(imOut);
 end
 end

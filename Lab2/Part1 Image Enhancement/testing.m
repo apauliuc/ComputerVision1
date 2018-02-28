@@ -16,7 +16,6 @@ myPSNR(orig_img, imread('results/gaussian noise/gaussian_std_2.jpg'))
 
 %% Read img2
 img = imread('test\test.jpg');
-img = rgb2gray(img);
 
 %% First order gradient
 % [Gx1, Gy1] = imgradientxy(img);
