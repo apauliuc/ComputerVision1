@@ -1,10 +1,10 @@
 close all; clear; clc;
 
 k = 0.04;
-sigma = 3;5;
-threshold = 16000;
+sigma = 3,8;
+threshold = 14000;
 window_size = 14;
-rotate_img = true;
+rotate_img = ;
 
 orig_img = imread('person_toy/00000001.jpg');
 if rotate_img
