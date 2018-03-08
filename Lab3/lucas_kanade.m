@@ -1,5 +1,20 @@
-function lucas_kanade(image1, image2)
-% if RGB, transform to grayscale
+function fig = lucas_kanade(image1_path, image2_path)
+%LUCAS_KANADE apply Lucas-Kanade algorithm on given images to determine
+%optical flow
+%  lucas_kanade(image1_path, image2_path)
+%  lucas_kanade('sphere1.ppm', 'shpere2.ppm');
+%
+%   - ARGUMENTS
+%     image1      Path of the image to be taken as reference point
+%     image2      Path of the image with movement
+%
+%   - OUTPUT
+%     fig  Figure containing image2 and the arrows of the optical flow
+
+image1 = imread(image1_path);
+image2 = imread(image2_path);
+
+% if images are RGB, transform to grayscale
 if size(image1,3) > 1
     frame1 = rgb2gray(image1);
 else
@@ -54,6 +69,7 @@ end
 
 % display image with the optical flow of each region (arrows are placed at
 % the computed region centers)
-figure, imshow(image2);
+fig = figure;
+imshow(image2);
 hold on;
-quiver(region_centers_x, region_centers_y, V(:,:,1), V(:,:,2), 'r');
+quiver(region_centers_y, region_centers_x, V(:,:,1), V(:,:,2), 'r');
