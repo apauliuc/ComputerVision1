@@ -11,7 +11,7 @@ function [ myHarris ] = harris_corner_detector(image, sigma, thres, window_N, ro
 %     rotate     boolean about whether the image should be rotated
 %   
 %   - OUTPUT
-%     myHarrs  A matrix of size [h,w], holding the cornerness values of
+%     myHarrs  A matrix of size [h,w], holding the cornerness value of
 %     each pixel.
 
 % 1) Read image and rotate if needed
@@ -33,8 +33,8 @@ Ix = conv2(I, Gx, 'same');
 Iy = conv2(I, Gy, 'same');
 
 % 4) Show computed image of derivatives Ix and Iy
-figure, imshow(Ix)
-figure, imshow(Iy)
+figure, imshow(Ix), title('image derivatives Ix')
+figure, imshow(Iy), title('image derivatives Iy')
 
 % 5) Compute the sums of the products of derivatives at each pixel
 Ix2 = conv2(Ix .^ 2, Gxy, 'same');
@@ -57,5 +57,6 @@ output = thresholded_harris > imdilate(thresholded_harris, window);
 % 9) Show original image with corner points
 figure, imshow(orig_img);
 hold on; % Prevent image from being blown away.
-plot(x,y,'r+', 'MarkerSize', 10);
+plot(x,y,'y+', 'MarkerSize', 10);
+title('original image with corner points')
 end
