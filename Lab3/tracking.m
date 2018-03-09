@@ -1,15 +1,23 @@
-function tracking (image_set, save_to_gif, file_extension)
+function tracking (image_set, save_to_gif, file_pattern)
 % Using Harris Corner Detector, locate feature points and track them in
 % a given sequence of images with Lucas-Kanade algorithm
+%  tracking(image_set, save_to_gif, file_pattern)
+%  tracking('pingpong', false, '*.jpeg');
+%
+%   - ARGUMENTS
+%       image_set       The folder name containing the image sequence
+%       save_to_gif     Boolean indicating whether to save output to GIF
+%       file_extension  Pattern of files in image set (*.jpg or *.jpeg)
+
 save_file = strcat(image_set, '.gif');
 h = figure;
 
 if strcmp(image_set, 'pingpong')
     images_folder = 'pingpong';
-    filePattern = fullfile(images_folder, file_extension);
+    filePattern = fullfile(images_folder, file_pattern);
 else
     images_folder = 'person_toy';
-    filePattern = fullfile(images_folder, file_extension);
+    filePattern = fullfile(images_folder, file_pattern);
 end
 
 % read all files in directory that match the pattern
@@ -46,7 +54,7 @@ for k = 1 : length(images)
         % display optical flow for current image
         imshow(curr_img);
         hold on;
-        quiver(x, y, V(:,1), V(:,2), 'r');
+        quiver(x, y, V(:,1), V(:,2), 0.5, 'r');
         drawnow;
         
         prev_img = curr_img;
