@@ -1,7 +1,9 @@
 function [matches, f1, f2] = keypoint_matching(image1,image2)
 %KEYPOINT_MATCHING Get keypoint matchings between two images
+%   Use David Lowe's SIFT to get keypoints in 2 images and get the
+%   matchings between them
 
-% transform to grayscale and single
+% transform to single, and grayscale if needed
 if size(image1,3) > 1
     image1 = single(rgb2gray(image1));
     image2 = single(rgb2gray(image2));
@@ -16,6 +18,5 @@ end
 
 % perform keypoint matching
 [matches, ~] = vl_ubcmatch(d1, d2);
-
 end
 
