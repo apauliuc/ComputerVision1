@@ -14,10 +14,12 @@ function [ stitched_image ] = stitch(image_left, image_right)
 
 % perform RANSAC algorithm to get best transformation
 [m1, m2, m3, m4, t1, t2] = RANSAC(feat_right, feat_left, matches, 50, 3);
-T = maketform('affine', [m1 -m2 0; -m3 m4 0; t1 t2 1]);
+% T = maketform('affine', [m1 -m2 0; -m3 m4 0; t1 t2 1]);
+T = affine2d([m1 -m2 0; -m3 m4 0; t1 t2 1]);
 
 % transform right image using transformation found by RANSAC
-transformed_image = imtransform(image_right, T);
+% transformed_image = imtransform(image_right, T);
+transformed_image = imwarp(image_right, T);
 
 % Compute image sizes
 [h_right, w_right, ~] = size(image_right);
