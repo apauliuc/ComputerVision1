@@ -14,7 +14,9 @@ points_image2_y = points_image2(:,2);
 points_image2_x = points_image2_x + size(image1, 2);
 
 % display images side by side with points highlighted and linked by lines
+figure;
 imshowpair(image1, image2, 'montage');
+title('Matched keypoints between the two images');
 hold on
 scatter(points_image1_x, points_image1_y, 'filled', 'r');
 scatter(points_image2_x, points_image2_y, 'filled', 'r');

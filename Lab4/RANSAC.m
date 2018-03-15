@@ -8,11 +8,14 @@ best_count_inliers = 0;
 for repeat = 1:N
     % generate random order of points and index them
     perm = randperm(size(matches,2));    
+%     points_image1 = features_image1(2:-1:1,matches(1,perm));
+%     points_image2 = features_image2(2:-1:1,matches(2,perm));
+    
     points_image1 = features_image1(1:2,matches(1,perm));
     points_image2 = features_image2(1:2,matches(2,perm));
     
     % get trasnformation parameters
-    x = compute_transformation_params(points_image1, points_image2, P);
+    x = compute_transformation_params(points_image1(:,1:P), points_image2(:,1:P));
     [m1, m2, m3, m4, t1, t2] = x{:};  
     
     % transform points in first image and count inliers
@@ -24,7 +27,6 @@ for repeat = 1:N
         best_count_inliers = count_inliers;
         inliers_image1 = points_image1(:,inliers_set);
         inliers_image2 = points_image2(:,inliers_set);
-%         [bm1, bm2, bm3, bm4, bt1, bt2] = deal(m1, m2, m3, m4, t1, t2);
     end
 end
 
@@ -34,11 +36,9 @@ x = compute_transformation_params(inliers_image1, inliers_image2);
 
 end
 
-function [x] = compute_transformation_params(points_first_img, points_second_img, no_points)
+function [x] = compute_transformation_params(points_first_img, points_second_img)
 % get A and b matrices
-if nargin == 2
-    no_points = size(points_first_img,2);
-end
+no_points = size(points_first_img,2);
 A = zeros(2*no_points, 6);
 b = zeros(2*no_points, 1);
 for i = 1:no_points
