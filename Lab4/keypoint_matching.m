@@ -1,5 +1,6 @@
 function [matches, f1, f2] = keypoint_matching(image1,image2)
 %KEYPOINT_MATCHING Get keypoint matchings between two images
+%   [matches, f1, f2] = keypoint_matching(image1,image2)
 %   Use David Lowe's SIFT to get keypoints in 2 images and get the
 %   matchings between them
 %   - ARGUMENTS

@@ -1,6 +1,6 @@
 function [ stitched_image ] = stitch(image_left, image_right, N, P)
 %STITCH creates a stitched image from an image pair
-%  stitched_image = stitch(image_left, image_right, N, P)
+%   stitched_image = stitch(image_left, image_right, N, P)
 %
 %   - ARGUMENTS
 %     image_left     Left image as matrix [h, w, 3]
@@ -20,23 +20,25 @@ end
 [matches, feat_right, feat_left] = keypoint_matching(image_right, image_left);
 
 % perform RANSAC algorithm to get best transformation
-[m1, m2, m3, m4, t1, t2] = RANSAC(feat_right, feat_left, matches, N, P);
-T = maketform('affine', [m1 -m2 0; -m3 m4 0; t1 t2 1]);
+[m1, m2, m3, m4, t1, t2] = RANSAC(feat_right, feat_left, matches, N, P, false);
+T = affine2d([m1 -m2 0; -m3 m4 0; t1 t2 1]);
 
 % transform right image using transformation found by RANSAC
-transformed_image = imtransform(image_right, T);
+transformed_image = imwarp(image_right, T);
 
-% Compute image sizes
+% Compute image sizes (left, right, transformed)
 [h_right, w_right, ~] = size(image_right);
 [h_left, w_left, ~] = size(image_left);
 [h_tr, w_tr, ~] = size(transformed_image);
 
-% Compute the transformed coordinate of the lower right corner
+% Compute the transformed coordinate of the lower right corner of the right
+% image
 corners = [1 1 w_right w_right; 1 h_right 1 h_right];
 end_coord = num2cell(max(round([m1 m2; m3 m4]*corners + [t1; t2]), [], 2));
 [x_end, y_end] = end_coord{:};
 
-% Compute size of stitched image
+% Compute size of stitched image, based on lower right corners of left
+% image and the transformed image
 w_canvas = max([x_end w_left]);
 h_canvas = max([y_end h_left]);
 

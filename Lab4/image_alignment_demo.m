@@ -4,15 +4,22 @@ close all; clear; clc;
 image1 = imread('boat1.pgm');
 image2 = imread('boat2.pgm');
 
+% get matching keypoints
 [matches, features_image1, features_image2] = keypoint_matching(image1, image2);
 
 %% Part 2 - Display images and 50 matched keypoints
-perm = randperm(size(matches,2));
-points_image1 = transpose(features_image1(1:2,matches(1,perm(1:50))));
-points_image2 = transpose(features_image2(1:2,matches(2,perm(1:50))));
-plot_matching_points(image1, image2, points_image1, points_image2);
+plot_matching_points(image1, image2, features_image1, features_image2, matches, 50);
 
-%% Part 3 - Perform RANSAC and transform image using best parameters
-[m1, m2, m3, m4, t1, t2] = RANSAC(features_image1, features_image2, matches, 100, 3);
+%% Part 3 - Perform RANSAC
+% set 6th argument to TRUE to display images with transformed points,
+% matched to input image for each iteration
+[m1, m2, m3, m4, t1, t2] = RANSAC(features_image1, features_image2, matches, 100, 10, false, image1, image2);
 
-transform_image(image1, image2, m1, m2, m3, m4, t1, t2, 'own');
+%% Part 3 - Transform image using best parameters
+% transform image1 with own/matlab implementation
+implementation = 'matlab'; % can be 'own' or 'matlab'
+new_image = transform_image(image1, m1, m2, m3, m4, t1, t2, implementation);
+
+figure, imshow(image1), title('Initial image');
+figure, imshow(image2), title('Desired output image');
+figure, imshow(new_image), title(sprintf('Transformed image with %s implementation', implementation));
