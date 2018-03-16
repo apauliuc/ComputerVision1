@@ -1,10 +1,10 @@
 function [ stitched_image ] = stitch(image_left, image_right, N, P)
 %STITCH creates a stitched image from an image pair
-%  stitched_image = stitch(image_left, image_right)
+%  stitched_image = stitch(image_left, image_right, N, P)
 %
 %   - ARGUMENTS
-%     image_left     Left image as matrix
-%     image_right    Right image as matrix
+%     image_left     Left image as matrix [h, w, 3]
+%     image_right    Right image as matrix [h, w, 3]
 %     N              Number of iterations in RANSAC
 %     P              Number of points initially selected in RANSAC
 %   
@@ -32,8 +32,8 @@ transformed_image = imtransform(image_right, T);
 [h_tr, w_tr, ~] = size(transformed_image);
 
 % Compute the transformed coordinate of the lower right corner
-coords = [1 1 w_right w_right; 1 h_right 1 h_right];
-end_coord = num2cell(max(round([m1 m2; m3 m4]*coords + [t1; t2]), [], 2));
+corners = [1 1 w_right w_right; 1 h_right 1 h_right];
+end_coord = num2cell(max(round([m1 m2; m3 m4]*corners + [t1; t2]), [], 2));
 [x_end, y_end] = end_coord{:};
 
 % Compute size of stitched image
