@@ -1,25 +1,30 @@
-function [ stitched_image ] = stitch(image_left, image_right)
+function [ stitched_image ] = stitch(image_left, image_right, N, P)
 %STITCH creates a stitched image from an image pair
 %  stitched_image = stitch(image_left, image_right)
 %
 %   - ARGUMENTS
-%     image_left     Path to the left image
-%     image_right    Path to the right image
+%     image_left     Left image as matrix
+%     image_right    Right image as matrix
+%     N              Number of iterations in RANSAC
+%     P              Number of points initially selected in RANSAC
 %   
 %   - OUTPUT
 %     stitched_image  A stitched image
+
+if nargin == 2
+    N = 50;
+    P = 3;
+end
 
 % get keypoint matchings between two images
 [matches, feat_right, feat_left] = keypoint_matching(image_right, image_left);
 
 % perform RANSAC algorithm to get best transformation
-[m1, m2, m3, m4, t1, t2] = RANSAC(feat_right, feat_left, matches, 50, 3);
-% T = maketform('affine', [m1 -m2 0; -m3 m4 0; t1 t2 1]);
-T = affine2d([m1 -m2 0; -m3 m4 0; t1 t2 1]);
+[m1, m2, m3, m4, t1, t2] = RANSAC(feat_right, feat_left, matches, N, P);
+T = maketform('affine', [m1 -m2 0; -m3 m4 0; t1 t2 1]);
 
 % transform right image using transformation found by RANSAC
-% transformed_image = imtransform(image_right, T);
-transformed_image = imwarp(image_right, T);
+transformed_image = imtransform(image_right, T);
 
 % Compute image sizes
 [h_right, w_right, ~] = size(image_right);

@@ -1,6 +1,20 @@
 function [bm1, bm2, bm3, bm4, bt1, bt2] = RANSAC(features_image1, features_image2, matches, N, P)
 %RANSAC Perform RANSAC algorithm to get best transformation
-%   ...
+%   - ARGUMENTS
+%       features_image1         Set of detected features in first image
+%       features_image2         Set of detected features in second image
+%       matches                 The matching between features
+%       N                       Number of iterations
+%       P                       Number of points for initial approximation
+%
+%   - OUTPUT
+%       [m1,m2,m3,m4,t1,t2]     Best set of transformation parameters from
+%                               image1 to image2
+
+if nargin == 3
+    N = 50;
+    P = 3;
+end
 
 best_count_inliers = 0;
 
@@ -8,9 +22,6 @@ best_count_inliers = 0;
 for repeat = 1:N
     % generate random order of points and index them
     perm = randperm(size(matches,2));    
-%     points_image1 = features_image1(2:-1:1,matches(1,perm));
-%     points_image2 = features_image2(2:-1:1,matches(2,perm));
-    
     points_image1 = features_image1(1:2,matches(1,perm));
     points_image2 = features_image2(1:2,matches(2,perm));
     
@@ -30,7 +41,17 @@ for repeat = 1:N
     end
 end
 
-% Use this if we want to perform least squares on all inliers
+% Perform least squares on all resulting inliers and detect again the set
+% of inliers
+x = compute_transformation_params(inliers_image1, inliers_image2);
+[m1, m2, m3, m4, t1, t2] = x{:};
+transformed_points = [m1, m2; m3, m4] * points_image1 + [t1; t2];
+[~, inliers_set] = detect_count_inliers(transformed_points, points_image2);
+
+% Perform least squares again, on the new set of inliers. Those are the final
+% transformation parameters.
+inliers_image1 = points_image1(:,inliers_set);
+inliers_image2 = points_image2(:,inliers_set);
 x = compute_transformation_params(inliers_image1, inliers_image2);
 [bm1, bm2, bm3, bm4, bt1, bt2] = x{:};
 

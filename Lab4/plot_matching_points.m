@@ -1,7 +1,10 @@
 function plot_matching_points(image1, image2, points_image1, points_image2)
 %PLOT_MATCHING_POINTS Plot the two images and their matched keypoints
-%   Using the David Lowe's SIFT to match keypoints, we plot the points in
-%   two side-by-side images and provide matchings between them.
+%   - ARGUMENTS
+%       image1              First image as matrix
+%       image2              Second image as matrix
+%       points_image1       Feature points in image1
+%       points_image2       Feature points in image2
 
 % save x,y coordinates for points for easier access
 points_image1_x = points_image1(:,1);

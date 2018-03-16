@@ -1,9 +1,13 @@
 function transform_image(image1, image2, m1, m2, m3, m4, t1, t2, implementation)
 %TRANSFORM_IMAGE Transform image1 to new image using the best
-%transformation parameters computed with RANSAC
-%   ...
+% transformation parameters computed with RANSAC
+%   - ARGUMENTS
+%       image1                  First image as matrix
+%       image2                  Second image as matrix
+%       [m1,m2,m3,m4,t1,t2]     Best transformation parameters from RANSAC
+%       implementation          Type of implementation (matlab or own)
 
-if nargin < 9
+if nargin == 8
     implementation = 'matlab';
 end
 
@@ -18,7 +22,6 @@ else
     [C,R] = meshgrid(1:w, 1:h);
     img1_coord = [C(:)'; R(:)'];
     transf_coord = round([m1, m2; m3, m4] * img1_coord + [t1; t2]);
-    % transf_coord = round(flipud([m1, m2; m3, m4] * flipud(img1_coord) + [t1; t2]));
     
     % pad transformed coordinates
     transf_coord(2,:) = transf_coord(2,:) - min(transf_coord(2,:)) + 1;
