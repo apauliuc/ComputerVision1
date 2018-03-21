@@ -1,8 +1,11 @@
 function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
+% run(fullfile(fileparts(mfilename('fullpath')), ...
+%   '..', '..', '..', 'matlab', 'vl_setupnn.m')) ;
+
 run(fullfile(fileparts(mfilename('fullpath')), ...
-  '..', '..', '..', 'matlab', 'vl_setupnn.m')) ;
+  'MatConvNet', 'matlab', 'vl_setupnn.m')) ;
 
 opts.modelType = 'lenet' ;
 [opts, varargin] = vl_argparse(opts, varargin) ;
@@ -18,9 +21,9 @@ opts.contrastNormalization = true ;
 opts.networkType = 'simplenn' ;
 opts.train = struct() ;
 opts = vl_argparse(opts, varargin) ;
-if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;
+if ~isfield(opts.train, 'gpus'), opts.train.gpus = [1]; end
 
-opts.train.gpus = [1];
+opts.train.gpus = [];
 
 
 
@@ -83,6 +86,37 @@ classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
 
 %% TODO: Implement your loop here, to create the data structure described in the assignment
+basePath = '../Caltech4/ImageData/';
+file_template = '../Caltech4/ImageSets/%s.txt';
+file_num = 1;
+
+data = zeros(32,32,3, 'single');
+labels = [];
+sets = [];
+
+for i=1:length(classes)
+    for j=1:length(splits)
+        curr_set = strcat(classes{i}, '_', splits{j});
+        fileID = fopen(sprintf(file_template, curr_set), 'r');
+        files = textscan(fileID, '%s');
+        files = files{1};
+
+        for f=1:length(files)
+            fullPath = strcat(basePath, files{f}, '.jpg');
+            initial_img = imread(fullPath);
+            img = single(imresize(initial_img, [32, 32]));
+            
+            if size(img,3) == 1
+                img = repmat(img,1,1,3);
+            end
+            
+            data(:,:,:,file_num) = img;
+            labels = [labels, i];
+            sets = [sets, j]; %#ok<*AGROW>
+            file_num = file_num + 1;
+        end
+    end
+end
 
 
 %%
