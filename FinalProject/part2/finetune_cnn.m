@@ -1,9 +1,6 @@
 function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
-% run(fullfile(fileparts(mfilename('fullpath')), ...
-%   '..', '..', '..', 'matlab', 'vl_setupnn.m')) ;
-
 run(fullfile(fileparts(mfilename('fullpath')), ...
   'MatConvNet', 'matlab', 'vl_setupnn.m')) ;
 
@@ -31,7 +28,7 @@ opts.train.gpus = [];
 
 net = update_model();
 
-%% TODO: Implement getCaltechIMDB function below
+%% getCaltechIMDB function implemented below
 
 if exist(opts.imdbPath, 'file')
   imdb = load(opts.imdbPath) ;
@@ -74,7 +71,14 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 images = imdb.images.data(:,:,:,batch) ;
 labels = imdb.images.labels(1,batch) ;
-if rand > 0.5, images=fliplr(images) ; end
+if rand > 0.5
+    images=fliplr(images) ;
+end
+
+% flip upside down
+if rand > 0.5
+    images=flipud(images) ;
+end
 
 end
 
@@ -85,7 +89,9 @@ function imdb = getCaltechIMDB()
 classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
 
-%% TODO: Implement your loop here, to create the data structure described in the assignment
+%% Implementation done!
+% Caution! The Caltech4 folder with images should be placed in the parent
+% folder of this script
 basePath = '../Caltech4/ImageData/';
 file_template = '../Caltech4/ImageSets/%s.txt';
 file_num = 1;
